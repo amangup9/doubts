@@ -1,0 +1,60 @@
+Title:
+New Object is returned from constructor without its dependency injected
+
+Description
+I have this spring-boot code:
+```
+@SpringBootApplication
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+		User user = new User();
+		user.process();
+	}
+
+}
+```
+where we are creating new User and immediately calling its method named "process".
+
+User class:
+```
+@Component
+public class User {
+
+    @Autowired
+    private MyOrder myOrder;
+
+    public User() {
+        System.out.println("User constructor");
+    }
+    public void process() {
+        myOrder.process();
+    }
+}
+```
+
+MyOrder class:
+```
+
+@Component
+public class MyOrder {
+    public MyOrder() {
+        System.out.println("MyOrder constructor");
+    }
+    public void process() {
+        System.out.println("processing...");
+    }
+}
+```
+
+I am getting this output when running the main file "DemoApplication":
+
+[![enter image description here](https://i.sstatic.net/5q2FouHO.png)](https://i.sstatic.net/5q2FouHO.png)
+
+
+I tried executing this code and was expecting the User.process() to call the MyOrder.process(), without any NullPointerException.
+
+I wanted to understand what is happening under the hood, it seems that new User object is returned without injecting its dependencies, the reason why we are getting NullPointerException. Is it really the case that object with new keyword is returned without its dependency injected first?
+
+https://stackoverflow.com/questions/78638284/new-object-is-returned-from-constructor-without-its-dependency-injected
